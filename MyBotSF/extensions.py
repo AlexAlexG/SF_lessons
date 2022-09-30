@@ -25,7 +25,7 @@ class Convertor:
             amount = float(amount)
         except ValueError:
             raise APIException(f'Не удалось обработать количество: {amount}')
-        url = f"https://api.apilayer.com/fixer/convert?to={quote}&from={base}&amount={amount}"
+        url = f"https://api.apilayer.com/fixer/convert?to={base_ticker}&from={quote_ticker}&amount={amount}"
 
         payload = {}
         headers = {
@@ -34,9 +34,6 @@ class Convertor:
 
         response = requests.request("GET", url, headers=headers, data=payload)
 
-        status_code = response.status_code
-        result = response.text
-
-        r = requests.get(f'https://min-api.cryptocompare.com/data/price?fsym={quote_ticker}&tsyms={base_ticker}')
-        total_base = json.loads(r.content)[keys[base]]*int(amount)
+        total_base = json.loads(response.content)['result']
         return total_base
+
