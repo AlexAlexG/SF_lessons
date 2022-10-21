@@ -24,10 +24,20 @@ class Author(models.Model):
         self.ratingAuthor = pRat*3 + cRat + cpRat
         self.save()
 
+    def __str__(self):
+        return self.authorUser
+    class Meta:
+        verbose_name= 'Автор'
+        verbose_name_plural='Авторы'
+        ordering=['authorUser']
 
 class Category(models.Model):
-	name_category = models.CharField(max_length=64, unique=True)
-
+    name_category = models.CharField(max_length=64, unique=True)
+    def __str__(self):
+        return self.name_category
+    class Meta:
+        verbose_name= 'Категория'
+        verbose_name_plural='Категории'
 
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete = models.CASCADE)
@@ -57,11 +67,19 @@ class Post(models.Model):
     def preview(self):
 	    return self.text[0:123]+'...'
 
+    def __str__(self):
+        return f'{self.title}'
+    class Meta:
+        verbose_name= 'Новость'
+        verbose_name_plural='Новости'
+
 
 class PostCategory(models.Model):
     postThrough = models.ForeignKey(Post, on_delete = models.CASCADE)
     categoryThrough = models.ForeignKey(Category, on_delete = models.CASCADE)
 
+    def __str__(self):
+        return self.postThrough
 
 class Comment(models.Model):
     commentPost = models.ForeignKey(Post, on_delete = models.CASCADE)
@@ -78,3 +96,8 @@ class Comment(models.Model):
         self.rating -= 1
         self.save()
 
+    def __str__(self):
+        return self.text
+    class Meta:
+        verbose_name= 'Комментарий'
+        verbose_name_plural='Комментарии'

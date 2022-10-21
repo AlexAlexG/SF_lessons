@@ -1,0 +1,38 @@
+{% extends 'flatpages/default.html' %}
+
+{% load my_filters %}
+
+{% block title %}
+Products
+{% endblock title %}
+
+{% block content %}
+   <h1>Все новости на сегодня </h1>
+   <h3>На {{ time_now|date:'d M Y' }} новостей {{news|length}}</h3>
+
+   <h3> {{ next_sale|default_if_none:"Чуть позже сообщим о срочном известии!" }} </h3>
+
+   <hr>
+   {% if news %}
+       <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Превью</td>
+
+           </tr>
+
+           {% for post in sorted_posts %}
+           <tr>
+               <td>{{ post.title| bad_language }}</td>
+               <td>{{ post.dateCreation| date:'d M Y' }}</td>
+               <td>{{ post.text| truncatewords:20 | bad_language }}</td>
+
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>Новостей нет!</h2>
+   {% endif %}
+{% endblock content %}
