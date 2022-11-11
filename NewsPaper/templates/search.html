@@ -1,0 +1,88 @@
+{% extends 'flatpages/default.html' %}
+
+{% load my_filters %}
+{% load custom_tags %}
+
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+   <h1>Все новости</h1>
+
+   {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+   <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+   </form>
+<!--    <form action="" method="get" >-->
+<!--        {{ filterset.form.non_field_errors }}-->
+
+<!--        {{ filterset.form.name__icontains.errors }}-->
+<!--        <label for="{{ filterset.form.title__icontains.id_for_label }}">Заголовок</label>-->
+<!--        <input-->
+<!--            id="{{ filterset.form.title__icontains.id }}"-->
+<!--            name="{{ filterset.form.title__icontains.name }}"-->
+<!--            value="{{ filterset.form.title__icontains.value }}"-->
+
+<!--        >-->
+<!--        <label for="{{ filterset.form.categoryType__icontains.id_for_label }}">Категория</label>-->
+<!--        <input-->
+<!--            id="{{ filterset.form.categoryType__icontains.id }}"-->
+<!--            name="{{ filterset.form.categoryType__icontains.name }}"-->
+<!--            value="{{ filterset.form.categoryType__icontains.value }}"-->
+
+<!--        >-->
+<!--        <label for="{{ filterset.form.dateCreation__icontains.id_for_label }}">Дата новостей</label>-->
+<!--        <input-->
+<!--            id="{{ filterset.form.dateCreation__icontains.id }}"-->
+<!--            name="{{ filterset.form.dateCreation__icontains.name }}"-->
+<!--            value="{{ filterset.form.dateCreation__icontains.value }}"-->
+
+<!--        >-->
+<!--        <input type="submit" class="mt-3 btn-primary" value="Найти" />-->
+<!--    </form>-->
+
+   <hr>
+   {% if news %}
+       <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Превью</td>
+           </tr>
+
+           {% for post in news %}
+           <tr>
+               <td>{{ post.title| bad_language }}</td>
+               <td>{{ post.dateCreation| date:'d M Y' }}</td>
+               <td>{{ post.text| truncatewords:20 | bad_language }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>Новостей нет!</h2>
+   {% endif %}
+
+   {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endblock content %}

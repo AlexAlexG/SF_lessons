@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
-
+from django.urls import reverse
 
 class Author(models.Model):
     authorUser = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -25,7 +25,8 @@ class Author(models.Model):
         self.save()
 
     def __str__(self):
-        return self.authorUser
+        return f'{self.authorUser}'
+
     class Meta:
         verbose_name= 'Автор'
         verbose_name_plural='Авторы'
@@ -48,11 +49,11 @@ class Post(models.Model):
         (NEWS, 'Новость'),
         (ARTICLE, 'Статья')
     )
-    categoryType = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=ARTICLE)
+    categoryType = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=NEWS)
 
-    dateCreation = models.DateTimeField(auto_now_add = True)
+    dateCreation = models.DateTimeField(auto_now = True)
     postCategory = models.ManyToManyField(Category, through = 'PostCategory')
-    title = models.CharField(max_length = 255)
+    title = models.CharField(max_length = 255, unique=True)
     text = models.TextField()
     rating = models.SmallIntegerField(default = 0)
 
@@ -66,6 +67,9 @@ class Post(models.Model):
 
     def preview(self):
 	    return self.text[0:123]+'...'
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
     def __str__(self):
         return f'{self.title}'
