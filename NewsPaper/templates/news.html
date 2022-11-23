@@ -11,6 +11,17 @@ Posts
    <h3>{{ time_now|date:'d M Y' }}</h3>
 
 <!--   <h3> {{ next_sale|default_if_none:"Чуть позже сообщим о срочном известии!" }} </h3>-->
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Найти" />
+    </form>
+
+    <hr>
+
+    {# Теперь будем проверять не request.user.is_authenticated, а конкретные права #}
+    {% if perms.news.add_post %}
+    <a href="{% url 'create_post' %}">Добавить новость</a>
+    {% endif %}
 
    <hr>
    {% if news %}
@@ -19,6 +30,10 @@ Posts
                <td>Заголовок</td>
                <td>Дата публикации</td>
                <td>Превью</td>
+               {# Условие получается составным. #}
+               {% if perms.news.change_post or perms.news.delete_post %}
+               <td>Действия</td>
+               {% endif %}
 
            </tr>
 
@@ -27,7 +42,15 @@ Posts
                <td>{{ post.title| bad_language }}</td>
                <td>{{ post.dateCreation| date:'d M Y' }}</td>
                <td>{{ post.text| truncatewords:20 | bad_language }}</td>
-
+                <td>
+                    {# А здесь доступ для каждой ссылки теперь будем проверять отдельно #}
+                    {% if perms.news.change_post %}
+                    <a href="{% url 'post_update' pk=post.id %}">Изменить</a>
+                    {% endif %}
+                    {% if perms.news.delete_post %}
+                    <a href="{% url 'post_delete' post.id %}">Удалить</a>
+                    {% endif %}
+                </td>
            </tr>
            {% endfor %}
 
